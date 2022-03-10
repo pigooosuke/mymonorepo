@@ -1,0 +1,57 @@
+version: "3"
+
+x-dev-base: &dev-base
+  build: .
+  environment:
+    DATABASE_URL: mysql://docker:docker@mysql:3306/sample_proj
+    SERVER_APOLLO_URI: http://backend:3300
+    PUBLIC_APOLLO_URI: http://localhost:3300
+    TZ: Asia/Tokyo
+  volumes:
+
+services:
+  mysql:
+    # platform: linux/amd64 # for m1 mac
+    image: mysql/mysql-server:8.0
+    command: mysqld
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      MYSQL_DATABASE: sample_proj
+      TZ: "Asia/Tokyo"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/db/entrypoint:/docker-entrypoint-initdb.d
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  backend:
+    <<: *dev-base
+    build:
+      context: ./packages/backend
+      dockerfile: ./packages/backend/Dockerfile
+    working_dir: /app/packages/backend
+    command: npm run start:dev
+    tty: true
+    depends_on:
+      - mysql
+    ports:
+      - "3300:3300"
+    volumes:
+      - /app/packages/backend/node_modules
+
+  frontend:
+    <<: *dev-base
+    build:
+      dockerfile: ./packages/frontend/Dockerfile
+    working_dir: /app/packages/frontend
+    command: npm run dev
+    tty: true
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/packages/frontend/node_modules
