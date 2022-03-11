@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
-import { Task as TaskModel } from "@prisma/client";
 
 import { TasksService } from "@/tasks/tasks.service";
 
@@ -8,17 +7,17 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get("tasks/:id")
-  async getPostById(@Param("id") id: string): Promise<TaskModel> {
+  async getPostById(@Param("id") id: string) {
     return this.tasksService.task({ id: Number(id) });
   }
 
   @Get("tasks")
-  async getAllTasks(): Promise<TaskModel[]> {
+  async getAllTasks() {
     return this.tasksService.tasks({});
   }
 
   @Post("tasks")
-  async createTask(@Body() taskData: { title: string; done: boolean }): Promise<TaskModel> {
+  async createTask(@Body() taskData: { title: string; done: boolean }) {
     const { title, done } = taskData;
     return this.tasksService.createTask({
       title,
@@ -27,7 +26,7 @@ export class TasksController {
   }
 
   @Post("tasks/:id")
-  async updateTask(@Param("id") id: string, @Body() taskData: { title: string; done: boolean }): Promise<TaskModel> {
+  async updateTask(@Param("id") id: string, @Body() taskData: { title: string; done: boolean }) {
     const { title, done } = taskData;
     return this.tasksService.updateTask({
       where: { id: Number(id) },
@@ -36,7 +35,7 @@ export class TasksController {
   }
 
   @Delete("tasks/:id")
-  async deleteTask(@Param("id") id: string): Promise<TaskModel> {
+  async deleteTask(@Param("id") id: string) {
     return this.tasksService.deleteTask({ id: Number(id) });
   }
 }

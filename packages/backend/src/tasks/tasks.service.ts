@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma, Task } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "@/prisma.service";
 
@@ -7,7 +7,7 @@ import { PrismaService } from "@/prisma.service";
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async task(taskWhereUniqueInput: Prisma.TaskWhereUniqueInput): Promise<Task | null> {
+  async task(taskWhereUniqueInput: Prisma.TaskWhereUniqueInput) {
     return this.prisma.task.findUnique({
       where: taskWhereUniqueInput,
     });
@@ -19,7 +19,7 @@ export class TasksService {
     cursor?: Prisma.TaskWhereUniqueInput;
     where?: Prisma.TaskWhereInput;
     orderBy?: Prisma.TaskOrderByWithRelationInput;
-  }): Promise<Task[]> {
+  }) {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.task.findMany({
       skip,
@@ -30,13 +30,13 @@ export class TasksService {
     });
   }
 
-  async createTask(data: Prisma.TaskCreateInput): Promise<Task> {
+  async createTask(data: Prisma.TaskCreateInput) {
     return this.prisma.task.create({
       data,
     });
   }
 
-  async updateTask(params: { where: Prisma.TaskWhereUniqueInput; data: Prisma.TaskUpdateInput }): Promise<Task> {
+  async updateTask(params: { where: Prisma.TaskWhereUniqueInput; data: Prisma.TaskUpdateInput }) {
     const { where, data } = params;
     return this.prisma.task.update({
       data,
@@ -44,7 +44,7 @@ export class TasksService {
     });
   }
 
-  async deleteTask(where: Prisma.TaskWhereUniqueInput): Promise<Task> {
+  async deleteTask(where: Prisma.TaskWhereUniqueInput) {
     return this.prisma.task.delete({
       where,
     });
